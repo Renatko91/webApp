@@ -39,6 +39,7 @@ Vue.component('worker-form', {
                         var index = getIndex(this.workers, data.id);
                         this.workers.splice(index, 1, data);
                         this.text = '';
+                        this.id = null;
                     })
                 )
             } else {
@@ -46,6 +47,15 @@ Vue.component('worker-form', {
                      result.json().then(data => {
                         this.workers.push(data);
                         this.text = '';
+                        this.workers.sort(function (a, b) {
+                                      if (a.id > b.id) {
+                                        return 1;
+                                      }
+                                      if (a.id < b.id) {
+                                        return -1;
+                                      }
+                                      return 0;
+                                    });
                      })
                 )
             }
@@ -54,16 +64,24 @@ Vue.component('worker-form', {
 });
 
 Vue.component('worker-row', {
-    props: ['worker', 'editMethod'],
+    props: ['worker', 'editMethod', 'workers'],
     template:
         '<div>' +
         '<i>{{ worker.id }}</i> {{ worker.text }}' +
         '<input type = "button" value = "Edit"  @click = "update" />' +
-        '<input type = "button" value = "X" @click = "update" />' +
+        '<input type = "button" value = "X" @click = "del" />' +
         '</div>',
     methods: {
             update: function() {
                 this.editMethod(this.worker);
+            },
+            del: function() {
+                workerApi.remove({id: this.worker.id}).then(result => {
+                        if (result.ok) {
+                            this.workers.splice(this.workers.indexOf(this.worker), 1);
+                        }
+                    }
+                )
             }
     }
 });
@@ -79,7 +97,7 @@ Vue.component('workers-list', {
         '<div>' +
         '<worker-form :workers = "workers" :workerAttr = "worker" />' +
         '<worker-row v-for = "worker in workers" ' +
-        ':worker = "worker" :key = "worker.id" :editMethod = "editMethod" />' +
+        ':workers = "workers" :worker = "worker" :key = "worker.id" :editMethod = "editMethod" />' +
         '</div>',
     created: function() {
         workerApi.get().then(result =>

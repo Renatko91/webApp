@@ -11,22 +11,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("worker")
 public class WorkerController {
-    private int count = 4;
+    private int count = 1;
 
-    List<Map<String, String>> workers = new ArrayList<Map<String, String>>() {{
-        add(new HashMap<String, String>() {{
-            put("id", "1");
-            put("text", "Andrey");
-        }});
-        add(new HashMap<String, String>() {{
-            put("id", "2");
-            put("text", "Sasha");
-        }});
-        add(new HashMap<String, String>() {{
-            put("id", "3");
-            put("text", "Sergey");
-        }});
-    }};
+    List<Map<String, String>> workers = new ArrayList<>();
 
     @GetMapping()
     public List<Map<String, String>> list() {
@@ -41,12 +28,20 @@ public class WorkerController {
     private Map<String, String> findWorker(@PathVariable String id) {
         return workers.stream()
                 .filter(worker -> worker.get("id").equals(id))
-                .findAny().orElseThrow(NotFoundException::new);
+                .findFirst().orElseThrow(NotFoundException::new);
     }
 
     @PostMapping()
     public Map<String, String> create(@RequestBody Map<String, String> worker) {
-        worker.put("id", String.valueOf(count++));
+        count = 1;
+        for (Map<String, String> workerTwo : workers) {
+            if (workerTwo.get("id").equals(String.valueOf(count))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        worker.put("id", String.valueOf(count));
 
         workers.add(worker);
 
