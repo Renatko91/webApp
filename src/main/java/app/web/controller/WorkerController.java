@@ -3,10 +3,8 @@ package app.web.controller;
 import app.web.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("worker")
@@ -34,6 +32,7 @@ public class WorkerController {
     @PostMapping()
     public Map<String, String> create(@RequestBody Map<String, String> worker) {
         count = 1;
+        Collections.sort(workers, Comparator.comparingInt(a -> Integer.parseInt(a.get("id"))));
         for (Map<String, String> workerTwo : workers) {
             if (workerTwo.get("id").equals(String.valueOf(count))) {
                 count++;
