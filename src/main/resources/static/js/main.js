@@ -20,7 +20,7 @@ Vue.component('worker-form', {
     },
     watch: {
         workerAttr: function(newVal, oldWal) {
-            this.text = newVal.text;
+            this.text = newVal.name;
             this.id = newVal.id;
         }
     },
@@ -31,7 +31,7 @@ Vue.component('worker-form', {
         '</div>',
     methods: {
         save: function() {
-            var worker = { text: this.text };
+            var worker = { name: this.text };
 
             if (this.id) {
                 workerApi.update({id: this.id}, worker).then(result =>
@@ -47,15 +47,6 @@ Vue.component('worker-form', {
                      result.json().then(data => {
                         this.workers.push(data);
                         this.text = '';
-                        this.workers.sort(function (a, b) {
-                                      if (a.id > b.id) {
-                                        return 1;
-                                      }
-                                      if (a.id < b.id) {
-                                        return -1;
-                                      }
-                                      return 0;
-                                    });
                      })
                 )
             }
@@ -67,7 +58,7 @@ Vue.component('worker-row', {
     props: ['worker', 'editMethod', 'workers'],
     template:
         '<div>' +
-        '<i>{{ worker.id }}</i> {{ worker.text }}' +
+        '<i>{{ worker.id }}</i> {{ worker.name }}' +
         '<input type = "button" value = "Edit"  @click = "update" />' +
         '<input type = "button" value = "X" @click = "del" />' +
         '</div>',

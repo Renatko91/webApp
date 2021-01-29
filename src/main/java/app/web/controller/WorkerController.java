@@ -1,65 +1,49 @@
 package app.web.controller;
 
-import app.web.exception.NotFoundException;
+import app.web.domain.Worker;
+import app.web.repo.WorkerRepo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("worker")
 public class WorkerController {
-    private int count = 1;
 
-    List<Map<String, String>> workers = new ArrayList<>();
+    private final WorkerRepo workerRepo;
+
+    @Autowired
+    public WorkerController(WorkerRepo workerRepo) {
+        this.workerRepo = workerRepo;
+    }
 
     @GetMapping()
-    public List<Map<String, String>> list() {
-        return workers;
+    public List<Worker> list() {
+        return (List<Worker>) workerRepo.findAll();
     }
 
     @GetMapping("{id}")
-    public Map<String, String> getWorker(@PathVariable String id) {
-        return findWorker(id);
-    }
-
-    private Map<String, String> findWorker(@PathVariable String id) {
-        return workers.stream()
-                .filter(worker -> worker.get("id").equals(id))
-                .findFirst().orElseThrow(NotFoundException::new);
-    }
-
-    @PostMapping()
-    public Map<String, String> create(@RequestBody Map<String, String> worker) {
-        count = 1;
-        Collections.sort(workers, Comparator.comparingInt(a -> Integer.parseInt(a.get("id"))));
-        for (Map<String, String> workerTwo : workers) {
-            if (workerTwo.get("id").equals(String.valueOf(count))) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        worker.put("id", String.valueOf(count));
-
-        workers.add(worker);
-
+    public Worker getOne(@PathVariable("id") Worker worker) {
         return worker;
     }
 
+    @PostMapping()
+    public Worker create(@RequestBody Worker worker) {
+        return workerRepo.save(worker);
+    }
+
     @PutMapping("{id}")
-    public Map<String, String> update(@PathVariable String id,
-                                      @RequestBody Map<String, String> worker) {
-        Map<String, String> workerFromDb = findWorker(id);
+    public Worker update(@PathVariable ("id") Worker workerFromDb,
+                         @RequestBody Worker worker) {
+        BeanUtils.copyProperties(worker, workerFromDb,"id");
 
-        workerFromDb.putAll(worker);
-        workerFromDb.put("id", id);
-
-        return workerFromDb;
+        return workerRepo.save(workerFromDb);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable String id) {
-        workers.remove(findWorker(id));
+    public void delete(@PathVariable ("id") Worker worker) {
+        workerRepo.delete(worker);
     }
 }

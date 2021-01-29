@@ -1,9 +1,7 @@
 package app.web.repo;
 
 import app.web.domain.Worker;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface WorkerRepo extends CrudRepository<Worker, Integer> {
-
+public interface WorkerRepo extends JpaRepository<Worker, Long> {
 }
