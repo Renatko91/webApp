@@ -7,17 +7,15 @@
 </template>
 
 <script>
-    props: ['worker', 'editMethod', 'workers'],
-    methods: {
-        update: function() {
-            this.editMethod(this.worker);
-        },
-        del: function() {
-            workerApi.remove({id: this.worker.id}).then(result => {
-                if (result.ok) {
-                    this.workers.splice(this.workers.indexOf(this.worker), 1);
-                }
-            })
+    export default {
+        props: ['worker', 'editMethod', 'deleteMethod', 'workers'],
+        methods: {
+            update() {
+                this.editMethod(this.worker)
+            },
+            del() {
+                this.deleteMethod(this.worker)
+            }
         }
     }
 </script>

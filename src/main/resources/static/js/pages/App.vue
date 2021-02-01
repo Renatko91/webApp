@@ -1,20 +1,20 @@
 <template>
     <div>
-        <worker-list :workers = "workers" />
+        <workers-list :workers = "workers" />
     </div>
 </template>
 
 <script>
-    import WorkerList from 'components/WorkerList.vue'
+    import WorkersList from 'components/WorkerList.vue'
 
     export default {
         components: {
-            WorkerList
+            WorkersList
         },
         data() {
             return {
                 workers: frontendData.workers
             }
-        },
+        }
     }
 </script>

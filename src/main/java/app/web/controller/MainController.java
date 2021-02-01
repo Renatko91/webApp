@@ -26,6 +26,7 @@ public class MainController {
         data.put("workers", workerRepo.findAll());
 
         model.addAttribute("frontendData", data);
+        model.addAttribute("isDevMode", "dev".equals("dev"));
 
         return "index";
     }

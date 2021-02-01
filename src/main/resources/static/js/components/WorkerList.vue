@@ -5,13 +5,14 @@
             :key = "worker.id"
             :workers = "workers"
             :worker = "worker"
-            :editMethod = "editMethod" />
+            :editMethod = "editMethod"
+            :deleteMethod = "deleteMethod"/>
     </div>
 </template>
 
 <script>
-    import MessageForm from 'components/WorkerForm.vue'
-    import MessageRow from 'components/WorkerRow.vue'
+    import WorkerRow from 'components/WorkerRow.vue'
+    import WorkerForm from 'components/WorkerForm.vue'
 
     export default {
         props: ['workers'],
@@ -25,8 +26,15 @@
             }
         },
         methods: {
-            editMethod: function(worker) {
-                this.worker = worker;
+            editMethod(worker) {
+                this.worker = worker
+            },
+            deleteMethod(worker) {
+                this.$resource('/worker{/id}').remove({id: worker.id}).then(result => {
+                     if(result.ok) {
+                         this.workers.splice(this.workers.indexOf(worker), 1)
+                     }
+                })
             }
         }
     }
